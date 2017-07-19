@@ -1,0 +1,4 @@
+{
+  "name": "caribviper-pouchdb-repository",
+  "main": "dist/index.d.ts"
+}
