@@ -16,7 +16,13 @@ export declare class Repository {
      * @param entity Entity/document to be saved
      * @param dbGenerateId Indicates to use a database generated id if id is missing
      */
-    save<T extends Entity>(entity: T, dbGenerateId?: boolean): Promise<T | IDbError>;
+    save<T extends Entity>(entity: T, dbGenerateId?: boolean): Promise<T>;
+    /**
+     * Saves an entity without checking for the newest revision first.
+     * Has the greatest chances of having a conflict
+     * @param entity Entity to be saved
+     */
+    quickSave<T extends Entity>(entity: T): Promise<T>;
     /**
      * Removes an entity/document from the database
      * @param entity Entity to be removed
@@ -26,17 +32,17 @@ export declare class Repository {
      * Gets the requested entity
      * @param id Id of the entity/document to be fetched
      */
-    get<T extends Entity>(id: any): Promise<T | IDbError>;
+    get<T extends Entity>(id: any): Promise<T>;
     /**
      * Searches the database based on the criteria passed
      * @param query DbQueryObject specifying the criteria to be searched on
      */
-    find<T extends Entity>(query: DbQueryObject): Promise<T[] | IDbError>;
+    find<T extends Entity>(query: DbQueryObject): Promise<T[]>;
     /**
      * Get all entities within the document
      * @param options Options used to aide in the retrieval of data
      */
-    fetchAll(options?: IDbFetchOptions): Promise<any[] | IDbError>;
+    fetchAll(options?: IDbFetchOptions): Promise<any[]>;
     /**
      * Creates, updates or delete documents in bulk
      * @param docs Documents to be created/updated/deleted
@@ -52,5 +58,10 @@ export declare class Repository {
      * Creates a new db unknown error
      */
     private generateUnknownError();
+    /**
+     * Creates a new error message
+     * @param error Error message
+     * @param reason Reason for error`
+     */
     static createError(error: string, reason?: string): IDbError;
 }

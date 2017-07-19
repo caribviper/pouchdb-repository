@@ -22,7 +22,7 @@ export class Repository {
    * @param entity Entity/document to be saved
    * @param dbGenerateId Indicates to use a database generated id if id is missing
    */
-  public async save<T extends Entity>(entity: T, dbGenerateId: boolean = true): Promise<T | IDbError> {
+  public async save<T extends Entity>(entity: T, dbGenerateId: boolean = true): Promise<T> {
     if (!entity._id && !dbGenerateId)
       throw this.generateError('Failed to create entity', 'Invalid entity id');
 
@@ -37,7 +37,7 @@ export class Repository {
         }
         throw this.generateUnknownError();
       } catch (error) {
-        return error;
+        throw this.generateError('Failed to save', 'Unable to locate entity');
       }
     }
 
@@ -52,8 +52,27 @@ export class Repository {
         }
         throw this.generateError('Failed to save', 'Unknown error occurred');
       } catch (error) {
-        return error;
+        throw this.generateError('Failed to save', 'Unknown error occurred');
       }
+    }
+  }
+
+  /**
+   * Saves an entity without checking for the newest revision first.
+   * Has the greatest chances of having a conflict
+   * @param entity Entity to be saved
+   */
+  public async quickSave<T extends Entity>(entity: T): Promise<T> {
+    try {
+      let response: IDbResponse = await this.db.put(entity);
+      if (response.ok) {
+        entity._id = response.id;
+        entity._rev = response.rev;
+        return entity;
+      }
+      throw this.generateUnknownError();
+    } catch (error) {
+      throw new Error(JSON.stringify(error));
     }
   }
 
@@ -68,7 +87,7 @@ export class Repository {
       try {
         entity = await this.db.get(id);
       } catch (error) {
-        return this.generateError('Unable to delete entity.', 'Possibly invalid id for entity');
+        throw this.generateError('Unable to delete entity.', 'Possibly invalid id for entity');
       }
       //entity exists so delete it
       let response: IDbResponse = await this.db.remove(entity);
@@ -82,13 +101,13 @@ export class Repository {
    * Gets the requested entity
    * @param id Id of the entity/document to be fetched
    */
-  public async get<T extends Entity>(id): Promise<T | IDbError> {
+  public async get<T extends Entity>(id): Promise<T> {
     if (!id)
       throw this.generateError('Unable to fetch requested entity due to invalid id');
     try {
       return await this.db.get(id);
     } catch (error) {
-      return this.generateError('Unable to fetch requested entity');
+      throw this.generateError('Unable to fetch requested entity');
     }
   }
 
@@ -96,14 +115,14 @@ export class Repository {
    * Searches the database based on the criteria passed
    * @param query DbQueryObject specifying the criteria to be searched on
    */
-  public async find<T extends Entity>(query: DbQueryObject): Promise<T[] | IDbError> {
+  public async find<T extends Entity>(query: DbQueryObject): Promise<T[]> {
     try {
       let results: IDbDocumentResultsGeneric<T> = await this.db.find(query);
       if (!results)
         throw new Error();
       return results.rows;
     } catch (error) {
-      return this.generateError('An error occurred executing the query')
+      throw this.generateError('An error occurred executing the query')
     }
   }
 
@@ -111,12 +130,12 @@ export class Repository {
    * Get all entities within the document
    * @param options Options used to aide in the retrieval of data
    */
-  public async fetchAll(options: IDbFetchOptions = null): Promise<any[] | IDbError> {
+  public async fetchAll(options: IDbFetchOptions = null): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
       return results.rows;
     } catch (error) {
-      return this.generateError('An error occurred fetching the entities');
+      throw this.generateError('An error occurred fetching the entities');
     }
   }
 
@@ -126,7 +145,7 @@ export class Repository {
    */
   public async bulkDocs(docs: any[]): Promise<IDbResponse[]> {
     if (!docs || docs.length < 1)
-      throw this.generateError('Buld doc error' , 'Unable to execute bulk document request due to empty docs parameter');
+      throw this.generateError('Bulk doc error', 'Unable to execute bulk document request due to empty docs parameter');
     return await this.db.bulkDocs(docs);
   };
 
@@ -142,9 +161,14 @@ export class Repository {
    * Creates a new db unknown error
    */
   private generateUnknownError(): IDbError {
-    return this.generateError('Unknown');
+    return Repository.createError('Unknown error occurred');
   }
 
+  /**
+   * Creates a new error message
+   * @param error Error message
+   * @param reason Reason for error`
+   */
   public static createError(error: string, reason: string = ''): IDbError {
     Assert.isTruthy(error, 'Error for error message cannot be null/empty');
     let e: IDbError;
