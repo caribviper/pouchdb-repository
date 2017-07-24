@@ -1,6 +1,7 @@
+import { EntityMaps } from './../../models/entity-maps';
 import { Assert } from './../../common/assert';
 import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults } from './../data/data-objects';
-import { Entity } from './../../models/entity';
+import { Entity, IEntity } from './../../models/entity';
 import { DatabaseObject } from './../data/database-object';
 import * as PouchDB from 'pouchdb';
 
@@ -26,21 +27,21 @@ export class Repository {
     if (!entity._id && !dbGenerateId)
       throw this.generateError('Failed to create entity', 'Invalid entity id');
 
-    //get entity
+    //new entity
     if (!entity._id) {
       try {
         let response: IDbResponse = await this.db.post(entity);
         if (response.ok) {
           entity._rev = response.rev;
           entity._id = response.id;
-          return entity;
+          return EntityMaps.mapEntity<T>(entity);
         }
         throw this.generateUnknownError();
       } catch (error) {
-        throw this.generateError('Failed to save', 'Unable to locate entity');
+        throw this.generateError('Failed to save', 'Unable to save entity');
       }
     }
-
+    //saving existing entity
     else {
       try {
         let orginalEntity: T = await this.db.get(entity._id);
@@ -48,7 +49,7 @@ export class Repository {
         let response: IDbResponse = await this.db.put(entity);
         if (response.ok) {
           entity._rev = response.rev;
-          return entity;
+          return EntityMaps.mapEntity<T>(entity);
         }
         throw this.generateError('Failed to save', 'Unknown error occurred');
       } catch (error) {
@@ -68,7 +69,7 @@ export class Repository {
       if (response.ok) {
         entity._id = response.id;
         entity._rev = response.rev;
-        return entity;
+        return EntityMaps.mapEntity<T>(entity);
       }
       throw this.generateUnknownError();
     } catch (error) {
@@ -105,7 +106,7 @@ export class Repository {
     if (!id)
       throw this.generateError('Unable to fetch requested entity due to invalid id');
     try {
-      return await this.db.get(id);
+      return await EntityMaps.mapEntity(this.db.get(id));
     } catch (error) {
       throw this.generateError('Unable to fetch requested entity');
     }
@@ -120,7 +121,7 @@ export class Repository {
       let results: IDbDocumentResultsGeneric<T> = await this.db.find(query);
       if (!results)
         throw new Error();
-      return results.rows;
+      return EntityMaps.mapEntityArray(results.rows);
     } catch (error) {
       throw this.generateError('An error occurred executing the query')
     }
@@ -133,7 +134,7 @@ export class Repository {
   public async fetchAll(options: IDbFetchOptions = null): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
-      return results.rows;
+      return EntityMaps.mapEntityArray(results.rows);
     } catch (error) {
       throw this.generateError('An error occurred fetching the entities');
     }
