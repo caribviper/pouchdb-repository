@@ -2,6 +2,7 @@ export * from './common/assert';
 export * from './common/category-error';
 export * from './common/utilities';
 export * from './models/entity';
+export * from './models/entity-maps';
 export * from './persistence/data/data-index';
 export * from './persistence/data/data-objects';
 export * from './persistence/data/database-object';
