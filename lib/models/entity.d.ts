@@ -21,7 +21,7 @@ export declare abstract class Entity implements IEntity {
     type: string;
     /**Time stamp of when entity was modified */
     timestamp: number;
-    constructor(type: string, id?: string);
+    constructor(type: string, id?: string, idHasType?: boolean);
     /**
      * Changes the value of the timestamp to indicate the most recent update
      */
@@ -34,10 +34,10 @@ export declare abstract class Entity implements IEntity {
     static createId(...identifiers: string[]): string;
     /**
      * Converts an entity from an existing object
-     * @param obj Object to be converted from
-     * @param entity Entity to contain the object data
+     * @param target Entity to contain the object data
+     * @param source Object to be converted from
      */
-    static fromObject(obj: any, entity: Entity): Entity;
+    static fromObject(target: Entity, source: any): Entity;
     /**
      * Merges an entity object to get a new entity object
      * @param entity Entity to be merged
@@ -49,4 +49,19 @@ export declare abstract class Entity implements IEntity {
      * @param entity Entity to have its timestamp updated
      */
     static updateTimestamp(entity: Entity): void;
+    /**
+     * Gets whether an object is a string
+     * @param obj Object to be checked if it is a string
+     */
+    static isString(obj: any): boolean;
+    /**
+     * Checks to see if an entity is not transient
+     * @param entity Entity the checked
+     */
+    static isNotTransient<T extends Entity>(entity: T): boolean;
+    /**
+     * Checks to see if an entity is transient
+     * @param entity Entity the checked
+     */
+    static isTransient<T extends Entity>(entity: T): boolean;
 }

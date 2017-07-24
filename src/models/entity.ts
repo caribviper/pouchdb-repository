@@ -28,11 +28,11 @@ export abstract class Entity implements IEntity {
   /**Time stamp of when entity was modified */
   public timestamp: number;
 
-  constructor(type: string, id: string = '') {
+  constructor(type: string, id: string = '', idHasType: boolean = false) {
     if (!type)
       throw new Error('Cannot create an entity without a type');
     this.type = type;
-    this._id = Entity.createId(type, id);
+    this._id = idHasType ? id : Entity.createId(type, id);
     this.update();
   }
 
@@ -49,22 +49,23 @@ export abstract class Entity implements IEntity {
    * @param identifiers Data relevant for creating the id 
    */
   public static createId(...identifiers: string[]): string {
-    if (!!identifiers && identifiers.length > 0)
+    if (!!identifiers && identifiers.length > 0) {
       return identifiers.join(':').toLowerCase();
+    }
     throw new Error('Unable to create id');
   }
 
   /**
    * Converts an entity from an existing object
-   * @param obj Object to be converted from
-   * @param entity Entity to contain the object data
+   * @param target Entity to contain the object data
+   * @param source Object to be converted from
    */
-  public static fromObject(obj, entity: Entity) {
-    let keys: string[] = Object.keys(obj);
+  public static fromObject(target: Entity, source) {
+    let keys: string[] = Object.keys(source);
     keys.forEach(o => {
-      entity[o] = obj[o];
+      target[o] = source[o];
     });
-    return entity;
+    return target;
   }
 
   /**
@@ -84,5 +85,27 @@ export abstract class Entity implements IEntity {
     if (!entity)
       throw new Error('Invalid entity');
     entity.update();
+  }
+
+  /**
+   * Gets whether an object is a string
+   * @param obj Object to be checked if it is a string
+   */
+  public static isString(obj: any): boolean { return typeof obj === 'string'; }
+
+  /**
+   * Checks to see if an entity is not transient
+   * @param entity Entity the checked
+   */
+  public static isNotTransient<T extends Entity>(entity: T) : boolean {
+    return !!entity && !!entity._id && !!entity._rev;
+  }
+
+  /**
+   * Checks to see if an entity is transient
+   * @param entity Entity the checked
+   */
+  public static isTransient<T extends Entity>(entity: T) : boolean {
+    return !this.isNotTransient(entity);
   }
 }

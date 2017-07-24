@@ -1,6 +1,6 @@
 {
   "name": "caribviper-pouchdb-repository",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "description": "Allows the utilisation of pouchdb with a repository structure",
   "main": "lib/index.js",
   "scripts": {
