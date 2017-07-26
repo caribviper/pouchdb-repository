@@ -190,3 +190,5 @@ export declare class DbFetchOptions implements IDbFetchOptions {
     /**Array of string keys to fetch in a single shot. */
     keys: string[];
 }
+/**Applies a wild card to end of a string */
+export declare function applyWildCardToString(data: string): string;

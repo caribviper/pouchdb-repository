@@ -1,7 +1,7 @@
 import { EntityMaps } from './../../models/entity-maps';
 import { Assert } from './../../common/assert';
 import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults } from './../data/data-objects';
-import { Entity, IEntity } from './../../models/entity';
+import { Entity, IEntity, IEntityMapBuilder } from './../../models/entity';
 import { DatabaseObject } from './../data/database-object';
 import * as PouchDB from 'pouchdb';
 
@@ -23,18 +23,18 @@ export class Repository {
    * @param entity Entity/document to be saved
    * @param dbGenerateId Indicates to use a database generated id if id is missing
    */
-  public async save<T extends Entity>(entity: T, dbGenerateId: boolean = true): Promise<T> {
+  public async save<T extends Entity>(entity: T, dbGenerateId: boolean = true, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T> {
     if (!entity._id && !dbGenerateId)
       throw this.generateError('Failed to create entity', 'Invalid entity id');
 
     //new entity
-    if (!entity._id) {
+    if (entity.hasType && !entity._id && dbGenerateId) {
       try {
         let response: IDbResponse = await this.db.post(entity);
         if (response.ok) {
           entity._rev = response.rev;
           entity._id = response.id;
-          return EntityMaps.mapEntity<T>(entity);
+          return EntityMaps.mapEntityMap(mapBuilder, entity);
         }
         throw this.generateUnknownError();
       } catch (error) {
@@ -44,12 +44,15 @@ export class Repository {
     //saving existing entity
     else {
       try {
+        if (entity.isTransient)
+          throw this.generateError('Failed to save', 'Entity is transient');
+
         let orginalEntity: T = await this.db.get(entity._id);
         entity._rev = orginalEntity._rev;
         let response: IDbResponse = await this.db.put(entity);
         if (response.ok) {
           entity._rev = response.rev;
-          return EntityMaps.mapEntity<T>(entity);
+          return EntityMaps.mapEntityMap(mapBuilder, entity);
         }
         throw this.generateError('Failed to save', 'Unknown error occurred');
       } catch (error) {
@@ -63,13 +66,16 @@ export class Repository {
    * Has the greatest chances of having a conflict
    * @param entity Entity to be saved
    */
-  public async quickSave<T extends Entity>(entity: T): Promise<T> {
+  public async quickSave<T extends Entity>(entity: T, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T> {
     try {
+      if (entity.isTransient)
+        throw this.generateError('Failed to save', 'Entity is transient');
+
       let response: IDbResponse = await this.db.put(entity);
       if (response.ok) {
         entity._id = response.id;
         entity._rev = response.rev;
-        return EntityMaps.mapEntity<T>(entity);
+        return EntityMaps.mapEntityMap(mapBuilder, entity);
       }
       throw this.generateUnknownError();
     } catch (error) {
@@ -102,11 +108,11 @@ export class Repository {
    * Gets the requested entity
    * @param id Id of the entity/document to be fetched
    */
-  public async get<T extends Entity>(id): Promise<T> {
+  public async get<T extends Entity>(id, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T> {
     if (!id)
       throw this.generateError('Unable to fetch requested entity due to invalid id');
     try {
-      return await EntityMaps.mapEntity(this.db.get(id));
+      return await EntityMaps.mapEntityMap(mapBuilder, this.db.get(id));
     } catch (error) {
       throw this.generateError('Unable to fetch requested entity');
     }
@@ -116,12 +122,12 @@ export class Repository {
    * Searches the database based on the criteria passed
    * @param query DbQueryObject specifying the criteria to be searched on
    */
-  public async find<T extends Entity>(query: DbQueryObject): Promise<T[]> {
+  public async find<T extends Entity>(query: DbQueryObject, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
     try {
       let results: IDbDocumentResultsGeneric<T> = await this.db.find(query);
       if (!results)
         throw new Error();
-      return EntityMaps.mapEntityArray(results.rows);
+      return EntityMaps.mapEntityMapArray(mapBuilder, results.rows);
     } catch (error) {
       throw this.generateError('An error occurred executing the query')
     }
@@ -134,7 +140,7 @@ export class Repository {
   public async fetchAll(options: IDbFetchOptions = null): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
-      return EntityMaps.mapEntityArray(results.rows);
+      return results.rows;
     } catch (error) {
       throw this.generateError('An error occurred fetching the entities');
     }

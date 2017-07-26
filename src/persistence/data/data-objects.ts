@@ -312,3 +312,8 @@ export class DbFetchOptions implements IDbFetchOptions {
   /**Array of string keys to fetch in a single shot. */
   keys: string[];
 }
+
+/**Applies a wild card to end of a string */
+export function applyWildCardToString (data: string) : string {
+  return `${data}\ufff0`;
+}

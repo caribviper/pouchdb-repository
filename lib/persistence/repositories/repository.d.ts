@@ -1,5 +1,5 @@
 import { IDbResponse, IDbError, DbQueryObject, IDbFetchOptions } from './../data/data-objects';
-import { Entity } from './../../models/entity';
+import { Entity, IEntityMapBuilder } from './../../models/entity';
 import { DatabaseObject } from './../data/database-object';
 /**Creates a new repository */
 export declare class Repository {
@@ -16,13 +16,13 @@ export declare class Repository {
      * @param entity Entity/document to be saved
      * @param dbGenerateId Indicates to use a database generated id if id is missing
      */
-    save<T extends Entity>(entity: T, dbGenerateId?: boolean): Promise<T>;
+    save<T extends Entity>(entity: T, dbGenerateId?: boolean, mapBuilder?: IEntityMapBuilder<T>): Promise<T>;
     /**
      * Saves an entity without checking for the newest revision first.
      * Has the greatest chances of having a conflict
      * @param entity Entity to be saved
      */
-    quickSave<T extends Entity>(entity: T): Promise<T>;
+    quickSave<T extends Entity>(entity: T, mapBuilder?: IEntityMapBuilder<T>): Promise<T>;
     /**
      * Removes an entity/document from the database
      * @param entity Entity to be removed
@@ -32,12 +32,12 @@ export declare class Repository {
      * Gets the requested entity
      * @param id Id of the entity/document to be fetched
      */
-    get<T extends Entity>(id: any): Promise<T>;
+    get<T extends Entity>(id: any, mapBuilder?: IEntityMapBuilder<T>): Promise<T>;
     /**
      * Searches the database based on the criteria passed
      * @param query DbQueryObject specifying the criteria to be searched on
      */
-    find<T extends Entity>(query: DbQueryObject): Promise<T[]>;
+    find<T extends Entity>(query: DbQueryObject, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
     /**
      * Get all entities within the document
      * @param options Options used to aide in the retrieval of data

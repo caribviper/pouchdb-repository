@@ -1,3 +1,4 @@
+import { IEntity } from './entity';
 /**
  * Base entity to be implemented
  */
@@ -8,6 +9,10 @@ export interface IEntity {
     _rev: string;
     /**Type of entity */
     type: string;
+}
+export interface IEntityMapBuilder<T extends Entity> {
+    new (): T;
+    mapToEntity(obj: any): T;
 }
 /**
  * base IEntity implementation
@@ -21,7 +26,19 @@ export declare abstract class Entity implements IEntity {
     type: string;
     /**Time stamp of when entity was modified */
     timestamp: number;
-    constructor(type: string, id?: string, idHasType?: boolean);
+    constructor(type?: string, id?: string, idHasType?: boolean);
+    /**
+     * Validates an entity
+     */
+    protected abstract validateEntity(): any;
+    /**
+     * Indicates if the entity is transient
+     */
+    readonly isTransient: boolean;
+    /**
+     * Indicates whether the entity has the type property set.
+     */
+    readonly hasType: boolean;
     /**
      * Changes the value of the timestamp to indicate the most recent update
      */
@@ -60,8 +77,16 @@ export declare abstract class Entity implements IEntity {
      */
     static isNotTransient<T extends Entity>(entity: T): boolean;
     /**
+     * Checks whether the entity has a type
+     * @param entity Entity to be checked
+     */
+    static hasType(entity: Entity): boolean;
+    /**
      * Checks to see if an entity is transient
      * @param entity Entity the checked
      */
     static isTransient<T extends Entity>(entity: T): boolean;
+    static mapToEntity(obj: any): Entity;
+}
+export declare class EntityFactory {
 }

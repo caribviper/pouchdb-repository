@@ -1,3 +1,4 @@
+import { IEntity } from './entity';
 /**
  * Base entity to be implemented
  */
@@ -10,6 +11,12 @@ export interface IEntity {
 
   /**Type of entity */
   type: string;
+}
+
+
+export interface IEntityMapBuilder<T extends Entity> {
+  new(): T;
+  mapToEntity(obj: any) : T;
 }
 
 /**
@@ -28,12 +35,29 @@ export abstract class Entity implements IEntity {
   /**Time stamp of when entity was modified */
   public timestamp: number;
 
-  constructor(type: string, id: string = '', idHasType: boolean = false) {
-    if (!type)
-      throw new Error('Cannot create an entity without a type');
+  constructor(type: string='', id: string = '', idHasType: boolean = false) {
     this.type = type;
     this._id = idHasType ? id : Entity.createId(type, id);
     this.update();
+  }
+
+  /**
+   * Validates an entity
+   */
+  protected abstract validateEntity();
+
+  /**
+   * Indicates if the entity is transient
+   */
+  public get isTransient() : boolean {
+    return Entity.isTransient(this);
+  }
+
+  /**
+   * Indicates whether the entity has the type property set.
+   */
+  public get hasType(): boolean {
+    return Entity.hasType(this);
   }
 
   /**
@@ -98,7 +122,15 @@ export abstract class Entity implements IEntity {
    * @param entity Entity the checked
    */
   public static isNotTransient<T extends Entity>(entity: T) : boolean {
-    return !!entity && !!entity._id && !!entity._rev;
+    return !!entity && !!entity.type && !!entity._id;
+  }
+
+  /**
+   * Checks whether the entity has a type
+   * @param entity Entity to be checked
+   */
+  public static hasType(entity: Entity) : boolean {
+    return !!entity && !!entity.type;
   }
 
   /**
@@ -108,4 +140,12 @@ export abstract class Entity implements IEntity {
   public static isTransient<T extends Entity>(entity: T) : boolean {
     return !this.isNotTransient(entity);
   }
+
+  public static mapToEntity(obj: any) : Entity {
+    return obj as Entity;
+  }
+}
+
+export class EntityFactory {
+
 }
