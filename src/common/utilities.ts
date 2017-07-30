@@ -31,7 +31,7 @@ export class Utilities {
       return property as string;
     const name = property.toString();
     const start = name.indexOf('.');
-    const end = name.indexOf(';');
+    const end = name.length;
     if (start > -1 && end > 0)
       return name.substring(start + 1, end);
     return '';

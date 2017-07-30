@@ -7,7 +7,7 @@ export class Assert {
    * @param title Title/Category of error
    */
   static isTrue(value: boolean, message: string, title: string = '') {
-    if (!value)
+    if (value !== true)
       throw new CategoryError(message, title);
   }
 
@@ -18,7 +18,7 @@ export class Assert {
    * @param title Title/Category of error
    */
   static isFalse(value: boolean, message: string, title: string = '') {
-    if (value === false)
+    if (value !== false)
       throw new CategoryError(message, title);
   }
 
@@ -41,7 +41,7 @@ export class Assert {
    * @param title Title/Category of error
    */
   static isFalsey(value: any, message: string, title: string = '') {
-    if (!value)
+    if (!!value)
       throw new CategoryError(message, title);
   }
 
