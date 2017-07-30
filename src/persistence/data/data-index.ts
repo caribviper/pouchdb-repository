@@ -1,5 +1,4 @@
-import { Utilities } from './../../common/utilities';
-import { Assert } from './../../common/assert';
+import { Assert, Utilities } from 'caribviper-common';
 
 /**Provides base outline for database index */
 export interface IDataIndex {

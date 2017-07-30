@@ -1,7 +1,6 @@
-import { EntityMaps } from './../../models/entity-maps';
-import { Assert } from './../../common/assert';
+import { Assert } from 'caribviper-common';
+import { Entity, IEntity, IEntityMapBuilder, EntityMaps } from 'caribviper-entities';
 import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults, IDbQueryResultGeneric } from './../data/data-objects';
-import { Entity, IEntity, IEntityMapBuilder } from './../../models/entity';
 import { DatabaseObject } from './../data/database-object';
 import * as PouchDB from 'pouchdb';
 

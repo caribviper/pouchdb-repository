@@ -1,5 +1,5 @@
+import { Entity, IEntityMapBuilder } from 'caribviper-entities';
 import { IDbResponse, IDbError, DbQueryObject, IDbFetchOptions } from './../data/data-objects';
-import { Entity, IEntityMapBuilder } from './../../models/entity';
 import { DatabaseObject } from './../data/database-object';
 /**Creates a new repository */
 export declare class Repository {

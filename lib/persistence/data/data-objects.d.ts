@@ -1,4 +1,4 @@
-import { IEntity } from './../../models/entity';
+import { IEntity } from 'caribviper-entities';
 /**Database general errors */
 export interface IDbError {
     error: string;

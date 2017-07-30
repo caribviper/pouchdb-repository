@@ -1,5 +1,5 @@
 import { IDbInfo, IDbError } from './data-objects';
-import { Assert } from './../../common/assert';
+import { Assert } from 'caribviper-common';
 import * as PouchDB from 'pouchdb';
 import * as PouchDbFind from 'pouchdb-find';
 
