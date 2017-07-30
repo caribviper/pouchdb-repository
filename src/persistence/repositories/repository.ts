@@ -146,8 +146,19 @@ export class Repository {
    */
   public async fetchAllByType<T extends Entity>(options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
     try {
-      let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
-      return EntityMaps.mapEntityMapArray(mapBuilder, results.rows);
+      if (!options) {
+        let results: IDbDocumentResults = await this.db.allDocs();
+        return results.rows;
+      }
+      else {
+        options.include_docs = true;
+        let results: IDbDocumentResults = await this.db.allDocs(options);
+        let entities: T[] = [];
+        results.rows.forEach(row => {
+          entities.push(EntityMaps.mapEntityMap(mapBuilder, row.doc));
+        });
+        return entities;
+      }
     } catch (error) {
       throw this.generateError('An error occurred fetching the entities');
     }
