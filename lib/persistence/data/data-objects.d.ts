@@ -77,9 +77,9 @@ export declare class DbSelectorValue {
      * Adds a value item to the property
      * @param item Value item to be added
      */
-    withValue(item: string | number | {
+    withValue(item: string | number | boolean | {
         propertyName: string;
-        value: string;
+        value: string | number | boolean;
     }): DbSelectorValue;
     /**
      * Adds an object as a value item
@@ -191,4 +191,4 @@ export declare class DbFetchOptions implements IDbFetchOptions {
     keys: string[];
 }
 /**Applies a wild card to end of a string */
-export declare function applyWildCardToString(data: string): string;
+export declare function applyWildCard(data: string): string;

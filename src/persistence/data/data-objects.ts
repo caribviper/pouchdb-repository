@@ -103,8 +103,8 @@ export class DbSelectorValue {
    * Adds a value item to the property
    * @param item Value item to be added
    */
-  withValue(item: string | number | { propertyName: string, value: string }): DbSelectorValue {
-    if ((typeof item === 'string' || typeof item === 'number')) {
+  withValue(item: string | number | boolean | { propertyName: string, value: string | number | boolean }): DbSelectorValue {
+    if ((typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean')) {
       if (!this.property)
         this.property = item;
       else
@@ -251,7 +251,7 @@ export class DbQueryObject {
   limit: number;
 
   constructor(selector: DbSelector, fields: string[] = [], sort: any[] = [], limit: number = undefined) {
-    this.selector = selector;
+    this.selector = selector.selector;
     this.fields = fields || [];
     this.sort = sort || [];
     this.limit = (!limit || limit < 1) ? undefined : limit;
@@ -314,6 +314,6 @@ export class DbFetchOptions implements IDbFetchOptions {
 }
 
 /**Applies a wild card to end of a string */
-export function applyWildCardToString (data: string) : string {
-  return `${data}\ufff0`;
+export function applyWildCard(data: string): string {
+  return `${data}\uffff`;
 }

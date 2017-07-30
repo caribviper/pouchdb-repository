@@ -1,6 +1,6 @@
 import { EntityMaps } from './../../models/entity-maps';
 import { Assert } from './../../common/assert';
-import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults } from './../data/data-objects';
+import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults, IDbQueryResultGeneric } from './../data/data-objects';
 import { Entity, IEntity, IEntityMapBuilder } from './../../models/entity';
 import { DatabaseObject } from './../data/database-object';
 import * as PouchDB from 'pouchdb';
@@ -26,6 +26,9 @@ export class Repository {
   public async save<T extends Entity>(entity: T, dbGenerateId: boolean = true, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T> {
     if (!entity._id && !dbGenerateId)
       throw this.generateError('Failed to create entity', 'Invalid entity id');
+
+    //validate entity
+    entity.validateEntity();
 
     //new entity
     if (entity.hasType && !entity._id && dbGenerateId) {
@@ -71,6 +74,9 @@ export class Repository {
       if (entity.isTransient)
         throw this.generateError('Failed to save', 'Entity is transient');
 
+      //validate entity
+      entity.validateEntity();
+
       let response: IDbResponse = await this.db.put(entity);
       if (response.ok) {
         entity._id = response.id;
@@ -112,7 +118,8 @@ export class Repository {
     if (!id)
       throw this.generateError('Unable to fetch requested entity due to invalid id');
     try {
-      return await EntityMaps.mapEntityMap(mapBuilder, this.db.get(id));
+      let result = await this.db.get(id);
+      return EntityMaps.mapEntityMap(mapBuilder, result);
     } catch (error) {
       throw this.generateError('Unable to fetch requested entity');
     }
@@ -124,12 +131,25 @@ export class Repository {
    */
   public async find<T extends Entity>(query: DbQueryObject, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
     try {
-      let results: IDbDocumentResultsGeneric<T> = await this.db.find(query);
+      let results: IDbQueryResultGeneric<T> = await this.db.find(query);
       if (!results)
         throw new Error();
-      return EntityMaps.mapEntityMapArray(mapBuilder, results.rows);
+      return EntityMaps.mapEntityMapArray(mapBuilder, results.docs);
     } catch (error) {
       throw this.generateError('An error occurred executing the query')
+    }
+  }
+
+  /**
+   * Get all entities within the document of the desired type
+   * @param options Options used to aide in the retrieval of data
+   */
+  public async fetchAllByType<T extends Entity>(options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
+    try {
+      let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
+      return EntityMaps.mapEntityMapArray(mapBuilder, results.rows);
+    } catch (error) {
+      throw this.generateError('An error occurred fetching the entities');
     }
   }
 
@@ -137,7 +157,7 @@ export class Repository {
    * Get all entities within the document
    * @param options Options used to aide in the retrieval of data
    */
-  public async fetchAll(options: IDbFetchOptions = null): Promise<any[]> {
+  public async fetchAll(options: IDbFetchOptions = undefined): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
       return results.rows;
@@ -178,9 +198,10 @@ export class Repository {
    */
   public static createError(error: string, reason: string = ''): IDbError {
     Assert.isTruthy(error, 'Error for error message cannot be null/empty');
-    let e: IDbError;
-    e.error = error;
-    e.reason = !reason ? error : reason;
+    let e: IDbError = {
+      error: error,
+      reason: !reason ? error : reason
+    };
     return e;
   }
 

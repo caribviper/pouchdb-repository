@@ -39,6 +39,11 @@ export declare class Repository {
      */
     find<T extends Entity>(query: DbQueryObject, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
     /**
+     * Get all entities within the document of the desired type
+     * @param options Options used to aide in the retrieval of data
+     */
+    fetchAllByType<T extends Entity>(options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
+    /**
      * Get all entities within the document
      * @param options Options used to aide in the retrieval of data
      */

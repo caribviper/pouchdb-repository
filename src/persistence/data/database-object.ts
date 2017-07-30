@@ -38,7 +38,7 @@ export class DatabaseObject {
     this.status = this.status + 'creating connectionn\n';
     Assert.isTrue((!!user && !!password) || (!user && !password), 'Both the username and password must be specified to user user/password credentials');
 
-    this.status = this.status + 'passed user|passwrd\n';
+    this.status = this.status + 'passed user|password\n';
     if (!!user) {
       if (!!dbName) {
         dbName = dbName.replace('/\//g', '');
@@ -51,7 +51,11 @@ export class DatabaseObject {
 
       this.status = this.status + 'connection ' + defaultConn + '\n';
     }
-    this._db = new PouchDB(defaultConn);
+    this._db = new PouchDB(defaultConn, {
+      ajax: {
+        cache: false
+      }
+    });
     this.initialized = true;
   }
 
@@ -59,7 +63,7 @@ export class DatabaseObject {
    * Closes the existing database
    */
   close(): Promise<void> {
-    if(!!this._db)
+    if (!!this._db)
       return this._db.close();
   }
 
