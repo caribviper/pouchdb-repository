@@ -27,7 +27,7 @@ export class EntityMaps {
    * @param entityMapBuilder Entity Class to be mapped
    * @param sources Array of entities to be mapped
    */
-  public static mapEntityMapArray<T extends Entity>(entityMapBuilder: IEntityMapBuilder<T>, sources: T[]) {
+  public static mapEntityMapArray<T extends Entity>(entityMapBuilder: IEntityMapBuilder<T>, sources: T[]) : T[] {
     let targets: any[] = [];
     sources.forEach((source: Entity) => {
       targets.push(EntityMaps.mapEntityMap(entityMapBuilder, source));

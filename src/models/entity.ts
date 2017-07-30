@@ -37,14 +37,14 @@ export abstract class Entity implements IEntity {
 
   constructor(type: string='', id: string = '', idHasType: boolean = false) {
     this.type = type;
-    this._id = idHasType ? id : Entity.createId(type, id);
+    this._id = idHasType ? id : Entity.generateId(type, id);
     this.update();
   }
 
   /**
    * Validates an entity
    */
-  protected abstract validateEntity();
+  public abstract validateEntity();
 
   /**
    * Indicates if the entity is transient
@@ -69,10 +69,9 @@ export abstract class Entity implements IEntity {
 
   /**
    * Creates a Unique id based on the data passed
-   * @param type Type of entity to be created
    * @param identifiers Data relevant for creating the id 
    */
-  public static createId(...identifiers: string[]): string {
+  public static generateId(...identifiers: string[]): string {
     if (!!identifiers && identifiers.length > 0) {
       return identifiers.join(':').toLowerCase();
     }

@@ -30,7 +30,7 @@ export declare abstract class Entity implements IEntity {
     /**
      * Validates an entity
      */
-    protected abstract validateEntity(): any;
+    abstract validateEntity(): any;
     /**
      * Indicates if the entity is transient
      */
@@ -45,10 +45,9 @@ export declare abstract class Entity implements IEntity {
     update(): void;
     /**
      * Creates a Unique id based on the data passed
-     * @param type Type of entity to be created
      * @param identifiers Data relevant for creating the id
      */
-    static createId(...identifiers: string[]): string;
+    static generateId(...identifiers: string[]): string;
     /**
      * Converts an entity from an existing object
      * @param target Entity to contain the object data
