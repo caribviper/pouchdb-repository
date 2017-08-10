@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "outDir": "dist",
+    "outDir": "lib",
     "declaration": true,
     "noImplicitAny": false,
     "removeComments": false,
@@ -17,7 +17,7 @@
   ],
   "exclude": [
     ".vscode",
-    "dist",
+    "lib",
     "doc",
     "node_modules"
   ],

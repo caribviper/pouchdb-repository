@@ -58,6 +58,8 @@ export class Repository {
         }
         throw this.generateError('Failed to save', 'Unknown error occurred');
       } catch (error) {
+        if (!!error.error)
+          throw new Error(error.error);
         throw this.generateError('Failed to save', 'Unknown error occurred');
       }
     }
@@ -99,13 +101,15 @@ export class Repository {
       try {
         entity = await this.db.get(id);
       } catch (error) {
+        if (!!error.error)
+          throw new Error(error.error);
         throw this.generateError('Unable to delete entity.', 'Possibly invalid id for entity');
       }
       //entity exists so delete it
       let response: IDbResponse = await this.db.remove(entity);
       return response.ok;
     } catch (error) {
-      return this.generateError('Unable to delete entity');
+      throw this.generateError('Unable to delete entity');
     }
   }
 
@@ -120,6 +124,8 @@ export class Repository {
       let result = await this.db.get(id);
       return EntityMaps.mapEntityMap(mapBuilder, result);
     } catch (error) {
+      if (!!error.error)
+        throw new Error(error.error);
       throw this.generateError('Unable to fetch requested entity');
     }
   }
