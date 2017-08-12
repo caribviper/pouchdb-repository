@@ -1,4 +1,3 @@
-import { IDbQueryResult } from './../../../lib/persistence/data/data-objects.d';
 import { Entity, IEntityMapBuilder } from 'caribviper-entities';
 import { IDbResponse, IDbError, DbQueryObject, IDbFetchOptions } from './../data/data-objects';
 import { DatabaseObject } from './../data/database-object';
@@ -38,7 +37,7 @@ export declare class Repository {
      * Searches the database based on the criteria passed
      * @param query DbQueryObject specifying the criteria to be searched on
      */
-    find<T extends Entity>(query: DbQueryObject, mapBuilder?: IEntityMapBuilder<T>): Promise<T[] | IDbQueryResult>;
+    find<T extends Entity>(query: DbQueryObject, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
     /**
      * Get all entities within the document of the desired type
      * @param options Options used to aide in the retrieval of data

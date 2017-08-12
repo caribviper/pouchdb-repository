@@ -1,4 +1,3 @@
-import { IDbQueryResult } from './../../../lib/persistence/data/data-objects.d';
 import { Assert } from 'caribviper-common';
 import { Entity, IEntity, IEntityMapBuilder, EntityMaps } from 'caribviper-entities';
 import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults, IDbQueryResultGeneric } from './../data/data-objects';
@@ -135,7 +134,7 @@ export class Repository {
    * Searches the database based on the criteria passed
    * @param query DbQueryObject specifying the criteria to be searched on
    */
-  public async find<T extends Entity>(query: DbQueryObject, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[] | IDbQueryResult> {
+  public async find<T extends Entity>(query: DbQueryObject, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
     try {
       let results: IDbQueryResultGeneric<T> = await this.db.find(query);
       if (!results)
