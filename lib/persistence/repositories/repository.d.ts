@@ -48,6 +48,8 @@ export declare class Repository {
      * @param options Options used to aide in the retrieval of data
      */
     fetchAll(options?: IDbFetchOptions): Promise<any[]>;
+    queryByType<T extends Entity>(view: string, options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
+    query(view: string, options?: IDbFetchOptions): Promise<any[]>;
     /**
      * Creates, updates or delete documents in bulk
      * @param docs Documents to be created/updated/deleted

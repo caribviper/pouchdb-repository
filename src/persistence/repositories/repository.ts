@@ -182,6 +182,35 @@ export class Repository {
     }
   }
 
+  public async queryByType<T extends Entity>(view: string, options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
+    try {
+      if (!options) {
+        let results: IDbDocumentResults = await this.db.query(view);
+        return results.rows;
+      }
+      else {
+        options.include_docs = true;
+        let results: IDbDocumentResults = await this.db.query(view, options);
+        let entities: T[] = [];
+        results.rows.forEach(row => {
+          entities.push(EntityMaps.mapEntityMap(mapBuilder, row.doc));
+        });
+        return entities;
+      }
+    } catch (error) {
+      throw this.generateError('An error occurred fetching the entities from the view');
+    }
+  }
+
+    public async query(view: string, options: IDbFetchOptions = undefined): Promise<any[]> {
+    try {
+      let results: IDbDocumentResults = (!options) ? await this.db.query(view) : await this.db.query(view, options);
+      return results.rows;
+    } catch (error) {
+      throw this.generateError('An error occurred fetching the entities from the view');
+    }
+  }
+
   /**
    * Creates, updates or delete documents in bulk
    * @param docs Documents to be created/updated/deleted

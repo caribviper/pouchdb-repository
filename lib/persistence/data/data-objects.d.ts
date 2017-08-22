@@ -143,14 +143,16 @@ export declare class DbSelector {
 /**Encapsulates all the parameters for a query */
 export declare class DbQueryObject {
     /**Gets/sets the items to queried on */
-    selector: DbSelector;
+    selector: any;
     /**Gets/sets the fields to be returned */
     fields: string[];
     /**Gets/sets the fields to have sorted by and the sort order (asc/desc) */
     sort: any[];
     /**Gets/sets the maximum rows/documents to return */
     limit: number;
-    constructor(selector: DbSelector, fields?: string[], sort?: any[], limit?: number);
+    /**The index that should be used */
+    use_index: string;
+    constructor(selector: DbSelector | any, fields?: string[], sort?: any[], limit?: number, use_index?: string);
 }
 /**Encapsulation of fetch all options */
 export interface IDbFetchOptions {
@@ -176,9 +178,9 @@ export declare class DbFetchOptions implements IDbFetchOptions {
     /**Include the document itself in each row in the doc field. Otherwise by default you only get the _id and _rev properties. */
     include_docs: boolean;
     /**Get documents with IDs in a certain range (inclusive/inclusive). */
-    startkey: string;
+    startkey: any;
     /**Get documents with IDs in a certain range (inclusive/inclusive). */
-    endkey: string;
+    endkey: any;
     /**Maximum number of documents to return. */
     limit: number;
     /**Number of docs to skip before returning (warning: poor performance on IndexedDB/LevelDB!). */
@@ -186,9 +188,9 @@ export declare class DbFetchOptions implements IDbFetchOptions {
     /**Reverse the order of the output documents. Note that the order of startkey and endkey is reversed when descending:true. */
     descending: boolean;
     /**Only return documents with IDs matching this string key. */
-    key: string;
+    key: any;
     /**Array of string keys to fetch in a single shot. */
-    keys: string[];
+    keys: any[];
 }
 /**Applies a wild card to end of a string */
 export declare function applyWildCard(data: string): string;

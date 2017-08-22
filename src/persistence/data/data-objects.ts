@@ -238,7 +238,7 @@ export class DbSelector {
 export class DbQueryObject {
 
   /**Gets/sets the items to queried on */
-  selector: DbSelector;
+  selector: any;
 
   /**Gets/sets the fields to be returned */
   fields: string[];
@@ -249,11 +249,15 @@ export class DbQueryObject {
   /**Gets/sets the maximum rows/documents to return */
   limit: number;
 
-  constructor(selector: DbSelector, fields: string[] = [], sort: any[] = [], limit: number = undefined) {
-    this.selector = selector.selector;
+  /**The index that should be used */
+  use_index: string;
+
+  constructor(selector: DbSelector | any, fields: string[] = [], sort: any[] = [], limit: number = undefined, use_index: string = undefined) {
+    this.selector = (!!selector.selector) ? selector.selector : selector;
     this.fields = fields || [];
     this.sort = sort || [];
     this.limit = (!limit || limit < 1) ? undefined : limit;
+    this.use_index = (!use_index) ? undefined : use_index;
   }
 }
 
@@ -291,10 +295,10 @@ export class DbFetchOptions implements IDbFetchOptions {
   include_docs: boolean = false;
 
   /**Get documents with IDs in a certain range (inclusive/inclusive). */
-  startkey: string;
+  startkey: any;
 
   /**Get documents with IDs in a certain range (inclusive/inclusive). */
-  endkey: string;
+  endkey: any;
 
   /**Maximum number of documents to return. */
   limit: number;
@@ -306,13 +310,13 @@ export class DbFetchOptions implements IDbFetchOptions {
   descending: boolean;
 
   /**Only return documents with IDs matching this string key. */
-  key: string;
+  key: any;
 
   /**Array of string keys to fetch in a single shot. */
-  keys: string[];
+  keys: any[];
 }
 
 /**Applies a wild card to end of a string */
 export function applyWildCard(data: string): string {
-  return `${data}\uffff`;
+  return data + '\ufff0';
 }
