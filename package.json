@@ -1,6 +1,6 @@
 {
   "name": "caribviper-pouchdb-repository",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "description": "Allows the utilisation of pouchdb with a repository structure",
   "main": "lib/index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "license": "SEE LICENSE IN <licence.txt>",
   "typings": "lib/index.d.ts",
   "devDependencies": {
+    "@types/request": "^2.0.3",
     "gulp": "^3.9.1",
     "gulp-rename": "^1.2.2",
     "gulp-typescript": "^3.2.1",
@@ -19,9 +20,10 @@
     "typescript": "^2.4.1"
   },
   "dependencies": {
+    "caribviper-common": "file:.\\..\\common",
+    "caribviper-entities": "file:.\\..\\entity",
     "pouchdb": "^6.3.4",
     "pouchdb-find": "^6.3.4",
-    "caribviper-common": "file:.\\..\\common",
-    "caribviper-entities": "file:.\\..\\entity"
+    "request": "^2.81.0"
   }
 }
