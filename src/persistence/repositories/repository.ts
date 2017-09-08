@@ -1,8 +1,11 @@
 import { Assert } from 'caribviper-common';
 import { Entity, IEntity, IEntityMapBuilder, EntityMaps } from 'caribviper-entities';
 import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults, IDbQueryResultGeneric } from './../data/data-objects';
+import { LuceneFetchOptions, LuceneFetchResults, LuceneScoredRow } from './../data/lucene-data-objects';
 import { DatabaseObject } from './../data/database-object';
 import * as PouchDB from 'pouchdb';
+import * as request from 'request';
+import { RequestCallback } from 'request';
 
 /**Creates a new repository */
 export class Repository {
@@ -202,12 +205,36 @@ export class Repository {
     }
   }
 
-    public async query(view: string, options: IDbFetchOptions = undefined): Promise<any[]> {
+  public async query(view: string, options: IDbFetchOptions = undefined): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.query(view) : await this.db.query(view, options);
       return results.rows;
     } catch (error) {
       throw this.generateError('An error occurred fetching the entities from the view');
+    }
+  }
+
+  /**
+   * Executes a query against the specified lucene server and couchdb database
+   * @param options LuceneFetchOptions required to perform search
+   * @param mapBuilder Entity mapping data
+   */
+  public async luceneQuery<T extends Entity>(options: LuceneFetchOptions, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<LuceneFetchResults> {
+    try {
+      if (!options)
+        throw new Error('Invalid Lucene Fetch Options');
+
+      let result: LuceneFetchResults = await this.executeLuceneSearch(options.url);
+      //map
+      for(let i = 0; i <result.rows.length; i++) {
+        result.rows[i] = LuceneScoredRow.clone(result.rows[i]);
+        if(!!result.rows[i].doc)
+          result.rows[i].doc = EntityMaps.mapEntityMap(mapBuilder, result.rows[i].doc);
+      }
+      return result;
+
+    } catch (error) {
+      throw this.generateError('An error occurred fetching the entities from the lucene index');
     }
   }
 
@@ -248,6 +275,26 @@ export class Repository {
       reason: !reason ? error : reason
     };
     return e;
+  }
+
+  /**
+  * Executes a lucene search
+  * @param url Url to the resource
+  */
+  private executeLuceneSearch(url: string): Promise<any> {
+    let data;
+    return new Promise((resolve, reject) => {
+      if(url.indexOf('http:') !== 0)
+        url = 'http://' + url;
+      request(url, (error, res, body) => {
+        if(!!error)
+          return reject(error);
+        if(!body)
+          return resolve(JSON.parse('{}'));
+        return resolve(JSON.parse(body));
+      });
+    });
+
   }
 
 }

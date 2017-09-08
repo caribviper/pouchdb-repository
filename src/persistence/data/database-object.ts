@@ -8,7 +8,7 @@ export class DatabaseObject {
   private initialized: boolean = false;
   private _db: PouchDB;
 
-  constructor(connection: string | { server: string, databaseName: string, user: string, password: string }) {
+  constructor(connection: string | { server: string, databaseName: string, user: string, password: string, timeout: number }) {
     PouchDB.plugin(PouchDbFind);
     if (!!connection) {
       if (typeof connection === 'string')
@@ -29,10 +29,15 @@ export class DatabaseObject {
   public status: string = '';
 
   /**
+   * 
    * Establishes the connection for remote host
    * @param connection Connection information required to connect to the database
+   * @param databaseName Name of the database
+   * @param user Username to use to connect to the database
+   * @param password Password to connect to the database
+   * @param timeout Timeout period to connect. Set to 10000 by default (maximum time)
    */
-  connect(connection: string, databaseName: string = '', user: string = '', password: string = '') {
+  connect(connection: string, databaseName: string = '', user: string = '', password: string = '', timeout: number = 10000) {
     let defaultConn: string = connection,
       dbName: string = databaseName;
     this.status = this.status + 'creating connectionn\n';
@@ -53,7 +58,8 @@ export class DatabaseObject {
     }
     this._db = new PouchDB(defaultConn, {
       ajax: {
-        cache: false
+        cache: false,
+        timeout: !timeout || timeout < 1000 || timeout > 10000 ? 10000 : timeout
       }
     });
     this.initialized = true;

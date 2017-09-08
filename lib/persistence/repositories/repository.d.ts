@@ -1,5 +1,6 @@
 import { Entity, IEntityMapBuilder } from 'caribviper-entities';
 import { IDbResponse, IDbError, DbQueryObject, IDbFetchOptions } from './../data/data-objects';
+import { LuceneFetchOptions, LuceneFetchResults } from './../data/lucene-data-objects';
 import { DatabaseObject } from './../data/database-object';
 /**Creates a new repository */
 export declare class Repository {
@@ -51,6 +52,12 @@ export declare class Repository {
     queryByType<T extends Entity>(view: string, options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
     query(view: string, options?: IDbFetchOptions): Promise<any[]>;
     /**
+     * Executes a query against the specified lucene server and couchdb database
+     * @param options LuceneFetchOptions required to perform search
+     * @param mapBuilder Entity mapping data
+     */
+    luceneQuery<T extends Entity>(options: LuceneFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<LuceneFetchResults>;
+    /**
      * Creates, updates or delete documents in bulk
      * @param docs Documents to be created/updated/deleted
      */
@@ -71,4 +78,9 @@ export declare class Repository {
      * @param reason Reason for error`
      */
     static createError(error: string, reason?: string): IDbError;
+    /**
+    * Executes a lucene search
+    * @param url Url to the resource
+    */
+    private executeLuceneSearch(url);
 }
