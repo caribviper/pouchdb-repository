@@ -173,13 +173,21 @@ export class Repository {
   }
 
   /**
-   * Get all entities within the document
+   * Get all entities within the result returning only documents
    * @param options Options used to aide in the retrieval of data
    */
   public async fetchAll(options: IDbFetchOptions = undefined): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
-      return results.rows;
+      if (options.include_docs) {
+        let rows = [];
+        results.rows.forEach((row) => {
+          rows.push(row.doc);
+        });
+        return rows;
+      }
+      else
+        return results.rows;
     } catch (error) {
       throw this.generateError('An error occurred fetching the entities');
     }
@@ -226,9 +234,9 @@ export class Repository {
 
       let result: LuceneFetchResults = await this.executeLuceneSearch(options.url);
       //map
-      for(let i = 0; i <result.rows.length; i++) {
+      for (let i = 0; i < result.rows.length; i++) {
         result.rows[i] = LuceneScoredRow.clone(result.rows[i]);
-        if(!!result.rows[i].doc)
+        if (!!result.rows[i].doc)
           result.rows[i].doc = EntityMaps.mapEntityMap(mapBuilder, result.rows[i].doc);
       }
       return result;
@@ -284,12 +292,12 @@ export class Repository {
   private executeLuceneSearch(url: string): Promise<any> {
     let data;
     return new Promise((resolve, reject) => {
-      if(url.indexOf('http:') !== 0)
+      if (url.indexOf('http:') !== 0)
         url = 'http://' + url;
       request(url, (error, res, body) => {
-        if(!!error)
+        if (!!error)
           return reject(error);
-        if(!body)
+        if (!body)
           return resolve(JSON.parse('{}'));
         return resolve(JSON.parse(body));
       });

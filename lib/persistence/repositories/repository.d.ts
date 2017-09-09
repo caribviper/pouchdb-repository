@@ -45,7 +45,7 @@ export declare class Repository {
      */
     fetchAllByType<T extends Entity>(options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
     /**
-     * Get all entities within the document
+     * Get all entities within the result returning only documents
      * @param options Options used to aide in the retrieval of data
      */
     fetchAll(options?: IDbFetchOptions): Promise<any[]>;

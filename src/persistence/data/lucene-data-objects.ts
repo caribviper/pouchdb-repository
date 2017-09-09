@@ -1,4 +1,4 @@
-import { Utilities, Assert } from 'caribviper-common';
+import { Utilities, Assert, StringUtilities } from 'caribviper-common';
 import { Entity, IEntityMapBuilder, EntityMaps } from 'caribviper-entities';
 
 
@@ -24,7 +24,10 @@ export class LuceneFetchOptions {
   }
 
   get url(): string {
-    let parameters = `?q=${this.q}&include_docs=${this.include_docs}&limit=${this.limit}&skip=${this.skip}`;
+    let query = StringUtilities.replaceAll(this.q,'/','//');
+    query = StringUtilities.replaceAll(query, '*', '* ');
+    query = StringUtilities.replaceAll(query, '?', '? ');
+    let parameters = `?q=${query}&include_docs=${this.include_docs}&limit=${this.limit}&skip=${this.skip}`;
     let path = Utilities.join(this.luceneServer, this.databaseName, '_design', this.indexPath + parameters);
     return path;
   }
