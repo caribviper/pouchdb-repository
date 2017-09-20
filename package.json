@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "caribviper-common": "file:.\\..\\common",
-    "caribviper-entities": "file:.\\..\\entity",
+    "caribviper-entity": "file:.\\..\\entity",
     "pouchdb": "^6.3.4",
     "pouchdb-find": "^6.3.4",
     "request": "^2.81.0"
