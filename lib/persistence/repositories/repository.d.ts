@@ -1,4 +1,4 @@
-import { Entity, IEntityMapBuilder } from 'caribviper-entities';
+import { Entity, IEntityMapBuilder } from 'caribviper-entity';
 import { IDbResponse, IDbError, DbQueryObject, IDbFetchOptions } from './../data/data-objects';
 import { LuceneFetchOptions, LuceneFetchResults } from './../data/lucene-data-objects';
 import { DatabaseObject } from './../data/database-object';

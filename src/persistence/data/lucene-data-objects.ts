@@ -1,5 +1,5 @@
 import { Utilities, Assert, StringUtilities } from 'caribviper-common';
-import { Entity, IEntityMapBuilder, EntityMaps } from 'caribviper-entities';
+import { Entity, IEntityMapBuilder, EntityMaps } from 'caribviper-entity';
 
 
 /**Implementation for Lucene searches against the db */

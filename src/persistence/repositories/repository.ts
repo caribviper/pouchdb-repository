@@ -1,5 +1,5 @@
 import { Assert } from 'caribviper-common';
-import { Entity, IEntity, IEntityMapBuilder, EntityMaps } from 'caribviper-entities';
+import { Entity, IEntity, IEntityMapBuilder, EntityMaps } from 'caribviper-entity';
 import { IDbResponse, IDbError, DbQueryObject, IDbDocumentResultsGeneric, IDbFetchOptions, IDbDocumentResults, IDbQueryResultGeneric } from './../data/data-objects';
 import { LuceneFetchOptions, LuceneFetchResults, LuceneScoredRow } from './../data/lucene-data-objects';
 import { DatabaseObject } from './../data/database-object';

@@ -1,5 +1,5 @@
 import { Assert, Utilities } from 'caribviper-common';
-import { IEntity } from 'caribviper-entities';
+import { IEntity } from 'caribviper-entity';
 
 /**Database general errors */
 export interface IDbError {
