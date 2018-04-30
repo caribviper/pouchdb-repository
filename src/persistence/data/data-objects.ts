@@ -230,6 +230,18 @@ export class DbSelector {
     return new DbSelectorAsValue(this, this.selectorObject, name);
   }
 
+  /**
+   * Changes the specified property value to the new one passed
+   * @param field Name of the field to be used
+   * @param value New value to be given to property
+   */
+  changePropertyValue<TValue>(field: string | ((model: IEntity) => TValue), value: any) {
+    Assert.isTruthy(field, 'DbSelector: Property field cannot be null/empty');
+    const name = Utilities.getPropertyName(field);
+    Assert.isTruthy(this.selectorObject[name], 'DbSelector: Property field passed does not exist', 'DbSelector');
+    this.selectorObject[name] = value;
+  }
+
 
 }
 

@@ -139,6 +139,12 @@ export declare class DbSelector {
      * @param field Name of the field to be used
      */
     withSelectorProperty<TValue>(field: string | ((model: IEntity) => TValue)): DbSelectorAsValue;
+    /**
+     * Changes the specified property value to the new one passed
+     * @param field Name of the field to be used
+     * @param value New value to be given to property
+     */
+    changePropertyValue<TValue>(field: string | ((model: IEntity) => TValue), value: any): void;
 }
 /**Encapsulates all the parameters for a query */
 export declare class DbQueryObject {
