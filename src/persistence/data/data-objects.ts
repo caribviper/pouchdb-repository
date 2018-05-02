@@ -131,11 +131,46 @@ export class DbSelectorValue {
     return this;
   }
 
+  /**Gets the selector */
   on(): DbSelector { return this.selector; }
+
+  /**
+   * Create an object with the specified field and value.
+   * @param field Name of the field to be used
+   * @param value Value to be applied to specified field
+   */
+  static createPropertyValue<TValue>(field: string | ((model: IEntity) => TValue), value: any): {} {
+    Assert.isTruthy(field, 'DbSelectorValue: Property field cannot be null/empty');
+    const name = Utilities.getPropertyName(field);
+    let o = {};
+    o[name] = value;
+    return o;
+  }
+
+  /**
+   * Create an array of objects with specified properties and values
+   * @param fields Array of names of the field properties
+   * @param values Array of values for the corresponding properties
+   */
+  static createPropertyArrayValue<TValue>(fields: string[] | ((model: IEntity) => TValue)[], values: any[]): {}[] {
+    Assert.isTruthy(fields, 'DbSelectorValue: Property fields cannot be null/empty');
+    Assert.isTruthy(values, 'DbSelectorValue: Property values cannot be null/empty');
+    Assert.isTruthy(Array.isArray(fields), 'DbSelectorValue: fields must be an array');
+    Assert.isTruthy(Array.isArray(values), 'DbSelectorValue: values must be an array');
+    Assert.isTruthy(fields.length > 0, 'DbSelectorValue: fields empty');
+    Assert.isTruthy(values.length > 0, 'DbSelectorValue: values empty');
+    Assert.isTruthy(values.length === fields.length, 'DbSelectorValue: feilds and values must be the same length');
+    let objs = [];
+    for (let i = 0; i < fields.length; i++) {
+      objs.push(this.createPropertyValue(fields[i], values[i]));
+    }
+    return objs;
+  }
+
 }
 
 
-/**Manages db selector values */
+/**Manages db selector values used mainly for Or/And */
 export class DbSelectorAsValue {
 
   /**
@@ -148,6 +183,7 @@ export class DbSelectorAsValue {
     Assert.isTruthy(propertyContainer, 'DbSelectorValue: Invalid parent object');
     Assert.isTruthy(propertyName, 'DbSelectorValue: Invalid property name');
     Assert.isTruthy(selector, 'DbSelectorValue: Invalid sector');
+    this.property = [];
   }
 
   private get property(): any[] { return this.propertyContainer[this.propertyName]; }
@@ -171,6 +207,33 @@ export class DbSelectorAsValue {
     if (!item)
       throw new Error('DbSelectorAsValue: Cannot past a falsey item object to withObject');
     this.property.push(item);
+    return this;
+  }
+
+  /**
+   * Adds an array of objects as the value items
+   * @param items An array of objects to be used with the property
+   */
+  withObjectArray(items: any[]): DbSelectorAsValue {
+    if (!items)
+      throw new Error('DbSelectorAsValue: Cannot past a falsey items object to withObjectArray');
+    items.forEach(item => {
+      this.withObject(item);
+    });
+    return this;
+  }
+
+  /**
+   * Adds a new object as a value item
+   * @param field Name of the property of the new object to be inserted
+   * @param value Value of the property of the new object to be inserted
+   */
+  withObjectValue<TValue>(field: string | ((model: IEntity) => TValue), value: any): DbSelectorAsValue {
+    Assert.isTruthy(field, 'DbSelector: Property field cannot be null/empty');
+    const name = Utilities.getPropertyName(field);
+    if (!value)
+      throw new Error('DbSelectorAsValue: Cannot past a falsey value object to withObjectValue');
+    this.property.push(DbSelectorValue.createPropertyValue(field, value));
     return this;
   }
 
@@ -230,6 +293,17 @@ export class DbSelector {
     return new DbSelectorAsValue(this, this.selectorObject, name);
   }
 
+  /**Creates an 'Or' property selector 'or' queries */
+  withSelectorPropertyOr(): DbSelectorAsValue {
+    this.selectorObject['$or']
+    return new DbSelectorAsValue(this, this.selectorObject, '$or');
+  }
+
+  /**Creates an Andr' property selector 'and' queries */
+  withSelectorPropertyAnd(): DbSelectorAsValue {
+    return new DbSelectorAsValue(this, this.selectorObject, '$and');
+  }
+
   /**
    * Changes the specified property value to the new one passed
    * @param field Name of the field to be used
@@ -242,7 +316,42 @@ export class DbSelector {
     this.selectorObject[name] = value;
   }
 
+  /**
+   * Removes a property from the selector
+   * @param field Name of field to be removed`
+   */
+  removeProperty<TValue>(field: string | ((model: IEntity) => TValue)) {
+    Assert.isTruthy(field, 'DbSelector: Property field cannot be null/empty');
+    const name = Utilities.getPropertyName(field);
+    if (!!this.selectorObject[name])
+      delete this.selectorObject[name];
+  }
 
+
+}
+
+/**Manages sort creation options */
+export class DbSortManager {
+
+  /**
+   * Gets the field name of the property to be sorted
+   * @param field Name of property to be sorted
+   */
+  static createSortValue<TValue>(field: string | ((model: IEntity) => TValue)): string {
+    return Utilities.getPropertyName(field);
+  }
+
+  /**
+   * Gets the field names of the properties to be sorted
+   * @param fields Names of the fields to be sorted
+   */
+  static createSortArray<TValue>(fields: ((model: IEntity) => TValue)[]): string[] {
+    let arr: string[] = [];
+    fields.forEach(field => {
+      arr.push(this.createSortValue(field));
+    });
+    return arr;
+  }
 }
 
 

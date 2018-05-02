@@ -86,9 +86,22 @@ export declare class DbSelectorValue {
      * @param item DbSelector to be used with the property
      */
     withObjectValue(item: any): DbSelectorValue;
+    /**Gets the selector */
     on(): DbSelector;
+    /**
+     * Create an object with the specified field and value.
+     * @param field Name of the field to be used
+     * @param value Value to be applied to specified field
+     */
+    static createPropertyValue<TValue>(field: string | ((model: IEntity) => TValue), value: any): {};
+    /**
+     * Create an array of objects with specified properties and values
+     * @param fields Array of names of the field properties
+     * @param values Array of values for the corresponding properties
+     */
+    static createPropertyArrayValue<TValue>(fields: string[] | ((model: IEntity) => TValue)[], values: any[]): {}[];
 }
-/**Manages db selector values */
+/**Manages db selector values used mainly for Or/And */
 export declare class DbSelectorAsValue {
     private selector;
     private propertyContainer;
@@ -111,6 +124,17 @@ export declare class DbSelectorAsValue {
      * @param item DbSelector to be used with the property
      */
     withObject(item: any): DbSelectorAsValue;
+    /**
+     * Adds an array of objects as the value items
+     * @param items An array of objects to be used with the property
+     */
+    withObjectArray(items: any[]): DbSelectorAsValue;
+    /**
+     * Adds a new object as a value item
+     * @param field Name of the property of the new object to be inserted
+     * @param value Value of the property of the new object to be inserted
+     */
+    withObjectValue<TValue>(field: string | ((model: IEntity) => TValue), value: any): DbSelectorAsValue;
     on(): DbSelector;
 }
 /**
@@ -139,12 +163,34 @@ export declare class DbSelector {
      * @param field Name of the field to be used
      */
     withSelectorProperty<TValue>(field: string | ((model: IEntity) => TValue)): DbSelectorAsValue;
+    /**Creates an 'Or' property selector 'or' queries */
+    withSelectorPropertyOr(): DbSelectorAsValue;
+    /**Creates an Andr' property selector 'and' queries */
+    withSelectorPropertyAnd(): DbSelectorAsValue;
     /**
      * Changes the specified property value to the new one passed
      * @param field Name of the field to be used
      * @param value New value to be given to property
      */
     changePropertyValue<TValue>(field: string | ((model: IEntity) => TValue), value: any): void;
+    /**
+     * Removes a property from the selector
+     * @param field Name of field to be removed`
+     */
+    removeProperty<TValue>(field: string | ((model: IEntity) => TValue)): void;
+}
+/**Manages sort creation options */
+export declare class DbSortManager {
+    /**
+     * Gets the field name of the property to be sorted
+     * @param field Name of property to be sorted
+     */
+    static createSortValue<TValue>(field: string | ((model: IEntity) => TValue)): string;
+    /**
+     * Gets the field names of the properties to be sorted
+     * @param fields Names of the fields to be sorted
+     */
+    static createSortArray<TValue>(fields: ((model: IEntity) => TValue)[]): string[];
 }
 /**Encapsulates all the parameters for a query */
 export declare class DbQueryObject {
