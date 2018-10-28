@@ -3,12 +3,37 @@ import { Assert } from 'caribviper-common';
 import * as PouchDB from 'pouchdb';
 import * as PouchDbFind from 'pouchdb-find';
 
+/**
+ * Creates a new DatabaseServerConnection object
+ */
+export class DatabaseServerConnection {
+  /**
+   * Creates a new DatabaseServerConnection
+   * @param server Host or location of the server
+   * @param databaseName Name of the database trying to connection to
+   * @param user Username to connect to the database
+   * @param password Password associated with the database
+   * @param timeout Time out period
+   * @param secure Indicates whether the connection should be secured. Defaults to false
+   */
+  constructor(public readonly server: string, public readonly databaseName: string, public readonly user: string, public readonly password: string, public readonly timeout: number, public readonly secure: boolean = false) {
+  }
+  
+  /**
+   * Creates a new DatabaseServerConnection with an existing connection and a new database
+   * @param oldConnection existing DatabaseServerConnection
+   * @param newDatabase New database to be applied
+   */
+  public static createNewConnection(oldConnection: DatabaseServerConnection, newDatabase: string) : DatabaseServerConnection {
+    return new DatabaseServerConnection(oldConnection.server, newDatabase, oldConnection.user, oldConnection.password, oldConnection.timeout, oldConnection.secure);
+  }
+}
 
 export class DatabaseObject {
   private initialized: boolean = false;
   private _db: PouchDB;
 
-  constructor(connection: string | { server: string, databaseName: string, user: string, password: string, timeout: number }) {
+  constructor(connection: string | DatabaseServerConnection) {
     PouchDB.plugin(PouchDbFind);
     if (!!connection) {
       if (typeof connection === 'string')
@@ -29,7 +54,6 @@ export class DatabaseObject {
   public status: string = '';
 
   /**
-   * 
    * Establishes the connection for remote host
    * @param connection Connection information required to connect to the database
    * @param databaseName Name of the database
