@@ -81,6 +81,7 @@ export declare class Repository {
     /**
     * Executes a lucene search
     * @param url Url to the resource
+    * @param secure Determines whether to use http/https
     */
-    private executeLuceneSearch(url);
+    private executeLuceneSearch(url, secure?);
 }

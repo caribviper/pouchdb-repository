@@ -232,7 +232,7 @@ export class Repository {
       if (!options)
         throw new Error('Invalid Lucene Fetch Options');
 
-      let result: LuceneFetchResults = await this.executeLuceneSearch(options.url);
+      let result: LuceneFetchResults = await this.executeLuceneSearch(options.url, options.secure);
       //map
       for (let i = 0; i < result.rows.length; i++) {
         result.rows[i] = LuceneScoredRow.clone(result.rows[i]);
@@ -288,13 +288,15 @@ export class Repository {
   /**
   * Executes a lucene search
   * @param url Url to the resource
+  * @param secure Determines whether to use http/https
   */
-  private executeLuceneSearch(url: string): Promise<any> {
+  private executeLuceneSearch(url: string, secure: boolean = false): Promise<any> {
     let data;
     return new Promise((resolve, reject) => {
-      if (url.indexOf('http:') !== 0)
-        url = 'http://' + url;
-      request(url, (error, res, body) => {
+      if (url.indexOf('http:') !== 0 && url.indexOf('https:') !== 0) {
+        url = `http${secure ? 's': ''}://` + url;
+      }
+      request(url, null, (error, res, body) => {
         if (!!error)
           return reject(error);
         if (!body)

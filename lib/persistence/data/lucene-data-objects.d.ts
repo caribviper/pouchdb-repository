@@ -8,6 +8,7 @@ export declare class LuceneFetchOptions {
     include_docs: boolean;
     limit: number;
     skip: number;
+    secure: boolean;
     /**
      * Creates a lucene fetch option
      * @param luceneServer Location to the lucene server
@@ -17,8 +18,9 @@ export declare class LuceneFetchOptions {
      * @param include_docs Indicates whether to include documents
      * @param limit Specify the default limit of records to return, default is 25
      * @param skip Number of th records to skip
+     * @param secure Determines whether the url is send as https
      */
-    constructor(luceneServer: string, databaseName: string, indexPath: string, q: string, include_docs?: boolean, limit?: number, skip?: number);
+    constructor(luceneServer: string, databaseName: string, indexPath: string, q: string, include_docs?: boolean, limit?: number, skip?: number, secure?: boolean);
     readonly url: string;
 }
 /**Implements a lucene scored row result */

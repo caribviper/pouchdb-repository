@@ -13,19 +13,19 @@ export class DatabaseServerConnection {
    * @param databaseName Name of the database trying to connection to
    * @param user Username to connect to the database
    * @param password Password associated with the database
-   * @param timeout Time out period
    * @param secure Indicates whether the connection should be secured. Defaults to false
+   * @param timeout Time out period
    */
-  constructor(public readonly server: string, public readonly databaseName: string, public readonly user: string, public readonly password: string, public readonly timeout: number, public readonly secure: boolean = false) {
+  constructor(public readonly server: string, public readonly databaseName: string, public readonly user: string, public readonly password: string,  public readonly secure: boolean = false, public readonly timeout: number = 10000) {
   }
-  
+
   /**
    * Creates a new DatabaseServerConnection with an existing connection and a new database
    * @param oldConnection existing DatabaseServerConnection
    * @param newDatabase New database to be applied
    */
-  public static createNewConnection(oldConnection: DatabaseServerConnection, newDatabase: string) : DatabaseServerConnection {
-    return new DatabaseServerConnection(oldConnection.server, newDatabase, oldConnection.user, oldConnection.password, oldConnection.timeout, oldConnection.secure);
+  public static createNewConnection(oldConnection: DatabaseServerConnection, newDatabase: string): DatabaseServerConnection {
+    return new DatabaseServerConnection(oldConnection.server, newDatabase, oldConnection.user, oldConnection.password, oldConnection.secure, oldConnection.timeout);
   }
 }
 
@@ -39,7 +39,7 @@ export class DatabaseObject {
       if (typeof connection === 'string')
         this.connect(connection);
       else
-        this.connect(connection.server, connection.databaseName, connection.user, connection.password);
+        this.connect(connection.server, connection.databaseName, connection.user, connection.password, connection.secure);
     }
   }
 
@@ -61,7 +61,7 @@ export class DatabaseObject {
    * @param password Password to connect to the database
    * @param timeout Timeout period to connect. Set to 10000 by default (maximum time)
    */
-  connect(connection: string, databaseName: string = '', user: string = '', password: string = '', timeout: number = 10000) {
+  connect(connection: string, databaseName: string = '', user: string = '', password: string = '', secure: boolean = false, timeout: number = 10000) {
     let defaultConn: string = connection,
       dbName: string = databaseName;
     this.status = this.status + 'creating connectionn\n';
@@ -75,8 +75,8 @@ export class DatabaseObject {
           dbName = `/${dbName}`;
         dbName = dbName.toLowerCase();
       }
-      let location: string = connection.replace('http://', '');
-      defaultConn = `http://${user}:${password}@${location}${dbName}`;
+      let location: string = connection.replace('http://', '').replace('https://', '');
+      defaultConn = `http${secure ? 's' : ''}://${user}:${password}@${location}${dbName}`;
 
       this.status = this.status + 'connection ' + defaultConn + '\n';
     }

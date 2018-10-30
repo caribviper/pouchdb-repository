@@ -8,18 +8,18 @@ export declare class DatabaseServerConnection {
     readonly databaseName: string;
     readonly user: string;
     readonly password: string;
-    readonly timeout: number;
     readonly secure: boolean;
+    readonly timeout: number;
     /**
      * Creates a new DatabaseServerConnection
      * @param server Host or location of the server
      * @param databaseName Name of the database trying to connection to
      * @param user Username to connect to the database
      * @param password Password associated with the database
-     * @param timeout Time out period
      * @param secure Indicates whether the connection should be secured. Defaults to false
+     * @param timeout Time out period
      */
-    constructor(server: string, databaseName: string, user: string, password: string, timeout: number, secure?: boolean);
+    constructor(server: string, databaseName: string, user: string, password: string, secure?: boolean, timeout?: number);
     /**
      * Creates a new DatabaseServerConnection with an existing connection and a new database
      * @param oldConnection existing DatabaseServerConnection
@@ -44,7 +44,7 @@ export declare class DatabaseObject {
      * @param password Password to connect to the database
      * @param timeout Timeout period to connect. Set to 10000 by default (maximum time)
      */
-    connect(connection: string, databaseName?: string, user?: string, password?: string, timeout?: number): void;
+    connect(connection: string, databaseName?: string, user?: string, password?: string, secure?: boolean, timeout?: number): void;
     /**
      * Closes the existing database
      */
