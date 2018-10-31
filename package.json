@@ -4,7 +4,8 @@
   "description": "Allows the utilisation of pouchdb with a repository structure",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node node_modules_private/post-install"
   },
   "author": "Kurtis Best <kurtis.best@gmail.com>",
   "license": "SEE LICENSE IN <licence.txt>",
