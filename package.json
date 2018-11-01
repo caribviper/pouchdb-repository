@@ -9,6 +9,10 @@
   "author": "Kurtis Best <kurtis.best@gmail.com>",
   "license": "SEE LICENSE IN <licence.txt>",
   "typings": "lib/index.d.ts",
+  "repository": {
+    "type": "library",
+    "url": "https://github.com/caribviper/pouchdb-repository"
+  },
   "devDependencies": {
     "@types/request": "^2.0.3",
     "gulp": "^3.9.1",
