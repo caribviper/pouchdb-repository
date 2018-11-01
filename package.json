@@ -1,18 +1,43 @@
 {
-  "name": "caribviper-pouchdb-repository",
-  "version": "0.6.0",
+  "_from": "github:caribviper/pouchdb-repository",
+  "_id": "caribviper-pouchdb-repository@0.6.0",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/caribviper-pouchdb-repository",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "caribviper-pouchdb-repository@github:caribviper/pouchdb-repository",
+    "name": "caribviper-pouchdb-repository",
+    "escapedName": "caribviper-pouchdb-repository",
+    "rawSpec": "github:caribviper/pouchdb-repository",
+    "saveSpec": "github:caribviper/pouchdb-repository",
+    "fetchSpec": null,
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "github:caribviper/pouchdb-repository#2e2eae293770c303608211b758ad472bffba50a2",
+  "_spec": "caribviper-pouchdb-repository@github:caribviper/pouchdb-repository",
+  "_where": "C:\\Projects\\eplanning\\server-online\\node_modules_private",
+  "author": {
+    "name": "Kurtis Best",
+    "email": "kurtis.best@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/caribviper/pouchdb-repository/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "caribviper-common": "github:caribviper/common",
+    "caribviper-entity": "github:caribviper/entity",
+    "pouchdb": "^6.3.4",
+    "pouchdb-find": "^6.3.4",
+    "request": "^2.81.0"
+  },
+  "deprecated": false,
   "description": "Allows the utilisation of pouchdb with a repository structure",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Kurtis Best <kurtis.best@gmail.com>",
-  "license": "SEE LICENSE IN <licence.txt>",
-  "typings": "lib/index.d.ts",
-  "repository": {
-    "type": "library",
-    "url": "https://github.com/caribviper/pouchdb-repository"
-  },
   "devDependencies": {
     "@types/request": "^2.0.3",
     "gulp": "^3.9.1",
@@ -23,11 +48,17 @@
     "tslint": "^5.5.0",
     "typescript": "^2.4.1"
   },
-  "dependencies": {
-    "caribviper-common": "caribviper/common",
-    "caribviper-entity": "caribviper/entity",
-    "pouchdb": "^6.3.4",
-    "pouchdb-find": "^6.3.4",
-    "request": "^2.81.0"
-  }
+  "homepage": "https://github.com/caribviper/pouchdb-repository#readme",
+  "license": "SEE LICENSE IN <licence.txt>",
+  "main": "lib/index.js",
+  "name": "caribviper-pouchdb-repository",
+  "repository": {
+    "type": "library",
+    "url": "git+https://github.com/caribviper/pouchdb-repository.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "typings": "lib/index.d.ts",
+  "version": "0.6.0"
 }
