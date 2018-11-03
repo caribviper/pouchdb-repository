@@ -145,7 +145,7 @@ export class Repository {
       return EntityMaps.mapEntityMapArray(mapBuilder, results.docs);
     } catch (error) {
       //we are retrying
-      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.find(query, mapBuilder, --retryAttempts);
       }
       throw this.generateError('An error occurred executing the query')
@@ -173,7 +173,7 @@ export class Repository {
       }
     } catch (error) {
       //we are retrying
-      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.fetchAllByType(options, mapBuilder, --retryAttempts);
       }
       throw this.generateError('An error occurred fetching the entities');
@@ -198,7 +198,7 @@ export class Repository {
         return results.rows;
     } catch (error) {
       //we are retrying
-      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.fetchAll(options, --retryAttempts);
       }
       throw this.generateError('An error occurred fetching the entities');
@@ -222,7 +222,7 @@ export class Repository {
       }
     } catch (error) {
       //we are retrying
-      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.queryByType(view, options, mapBuilder, --retryAttempts);
       }
       throw this.generateError('An error occurred fetching the entities from the view');
@@ -235,7 +235,7 @@ export class Repository {
       return results.rows;
     } catch (error) {
       //we are retrying
-      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.query(view, options, --retryAttempts);
       }
       throw this.generateError('An error occurred fetching the entities from the view');
@@ -263,7 +263,7 @@ export class Repository {
 
     } catch (error) {
       //we are retrying
-      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.luceneQuery(options, mapBuilder, --retryAttempts);
       }
       throw this.generateError('An error occurred fetching the entities from the lucene index');
