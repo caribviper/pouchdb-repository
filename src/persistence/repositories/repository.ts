@@ -137,13 +137,17 @@ export class Repository {
    * Searches the database based on the criteria passed
    * @param query DbQueryObject specifying the criteria to be searched on
    */
-  public async find<T extends Entity>(query: DbQueryObject, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
+  public async find<T extends Entity>(query: DbQueryObject, mapBuilder: IEntityMapBuilder<T> = undefined, retryAttempts: number = 3): Promise<T[]> {
     try {
       let results: IDbQueryResultGeneric<T> = await this.db.find(query);
       if (!results)
         throw new Error();
       return EntityMaps.mapEntityMapArray(mapBuilder, results.docs);
     } catch (error) {
+      //we are retrying
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+        return await this.find(query, mapBuilder, --retryAttempts);
+      }
       throw this.generateError('An error occurred executing the query')
     }
   }
@@ -152,7 +156,7 @@ export class Repository {
    * Get all entities within the document of the desired type
    * @param options Options used to aide in the retrieval of data
    */
-  public async fetchAllByType<T extends Entity>(options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
+  public async fetchAllByType<T extends Entity>(options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined, retryAttempts: number = 3): Promise<T[]> {
     try {
       if (!options) {
         let results: IDbDocumentResults = await this.db.allDocs();
@@ -168,6 +172,10 @@ export class Repository {
         return entities;
       }
     } catch (error) {
+      //we are retrying
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+        return await this.fetchAllByType(options, mapBuilder, --retryAttempts);
+      }
       throw this.generateError('An error occurred fetching the entities');
     }
   }
@@ -176,7 +184,7 @@ export class Repository {
    * Get all entities within the result returning only documents
    * @param options Options used to aide in the retrieval of data
    */
-  public async fetchAll(options: IDbFetchOptions = undefined): Promise<any[]> {
+  public async fetchAll(options: IDbFetchOptions = undefined, retryAttempts: number = 3): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.allDocs() : await this.db.allDocs(options);
       if (options.include_docs) {
@@ -189,11 +197,15 @@ export class Repository {
       else
         return results.rows;
     } catch (error) {
+      //we are retrying
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+        return await this.fetchAll(options, --retryAttempts);
+      }
       throw this.generateError('An error occurred fetching the entities');
     }
   }
 
-  public async queryByType<T extends Entity>(view: string, options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T[]> {
+  public async queryByType<T extends Entity>(view: string, options: IDbFetchOptions = undefined, mapBuilder: IEntityMapBuilder<T> = undefined, retryAttempts: number = 3): Promise<T[]> {
     try {
       if (!options) {
         let results: IDbDocumentResults = await this.db.query(view);
@@ -209,15 +221,23 @@ export class Repository {
         return entities;
       }
     } catch (error) {
+      //we are retrying
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+        return await this.queryByType(view, options, mapBuilder, --retryAttempts);
+      }
       throw this.generateError('An error occurred fetching the entities from the view');
     }
   }
 
-  public async query(view: string, options: IDbFetchOptions = undefined): Promise<any[]> {
+  public async query(view: string, options: IDbFetchOptions = undefined, retryAttempts: number = 3): Promise<any[]> {
     try {
       let results: IDbDocumentResults = (!options) ? await this.db.query(view) : await this.db.query(view, options);
       return results.rows;
     } catch (error) {
+      //we are retrying
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+        return await this.query(view, options, --retryAttempts);
+      }
       throw this.generateError('An error occurred fetching the entities from the view');
     }
   }
@@ -227,7 +247,7 @@ export class Repository {
    * @param options LuceneFetchOptions required to perform search
    * @param mapBuilder Entity mapping data
    */
-  public async luceneQuery<T extends Entity>(options: LuceneFetchOptions, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<LuceneFetchResults> {
+  public async luceneQuery<T extends Entity>(options: LuceneFetchOptions, mapBuilder: IEntityMapBuilder<T> = undefined, retryAttempts: number = 3): Promise<LuceneFetchResults> {
     try {
       if (!options)
         throw new Error('Invalid Lucene Fetch Options');
@@ -242,6 +262,10 @@ export class Repository {
       return result;
 
     } catch (error) {
+      //we are retrying
+      if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts === 1) {
+        return await this.luceneQuery(options, mapBuilder, --retryAttempts);
+      }
       throw this.generateError('An error occurred fetching the entities from the lucene index');
     }
   }
@@ -294,7 +318,7 @@ export class Repository {
     let data;
     return new Promise((resolve, reject) => {
       if (url.indexOf('http:') !== 0 && url.indexOf('https:') !== 0) {
-        url = `http${secure ? 's': ''}://` + url;
+        url = `http${secure ? 's' : ''}://` + url;
       }
       request(url, null, (error, res, body) => {
         if (!!error)

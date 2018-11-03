@@ -1,15 +1,19 @@
 {
+  "_args": [
+    [
+      "github:caribviper/pouchdb-repository",
+      "C:\\Projects\\eplanning\\server-online\\node_modules_private"
+    ]
+  ],
   "_from": "github:caribviper/pouchdb-repository",
-  "_id": "caribviper-pouchdb-repository@0.6.0",
+  "_id": "caribviper-pouchdb-repository@github:caribviper/pouchdb-repository#2e2eae293770c303608211b758ad472bffba50a2",
   "_inBundle": false,
   "_integrity": "",
   "_location": "/caribviper-pouchdb-repository",
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "caribviper-pouchdb-repository@github:caribviper/pouchdb-repository",
-    "name": "caribviper-pouchdb-repository",
-    "escapedName": "caribviper-pouchdb-repository",
+    "raw": "github:caribviper/pouchdb-repository",
     "rawSpec": "github:caribviper/pouchdb-repository",
     "saveSpec": "github:caribviper/pouchdb-repository",
     "fetchSpec": null,
@@ -19,7 +23,7 @@
     "/"
   ],
   "_resolved": "github:caribviper/pouchdb-repository#2e2eae293770c303608211b758ad472bffba50a2",
-  "_spec": "caribviper-pouchdb-repository@github:caribviper/pouchdb-repository",
+  "_spec": "github:caribviper/pouchdb-repository",
   "_where": "C:\\Projects\\eplanning\\server-online\\node_modules_private",
   "author": {
     "name": "Kurtis Best",
@@ -60,5 +64,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "typings": "lib/index.d.ts",
-  "version": "0.6.0"
+  "version": "0.6.1"
 }

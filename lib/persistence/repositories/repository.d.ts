@@ -38,25 +38,25 @@ export declare class Repository {
      * Searches the database based on the criteria passed
      * @param query DbQueryObject specifying the criteria to be searched on
      */
-    find<T extends Entity>(query: DbQueryObject, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
+    find<T extends Entity>(query: DbQueryObject, mapBuilder?: IEntityMapBuilder<T>, retryAttempts?: number): Promise<T[]>;
     /**
      * Get all entities within the document of the desired type
      * @param options Options used to aide in the retrieval of data
      */
-    fetchAllByType<T extends Entity>(options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
+    fetchAllByType<T extends Entity>(options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>, retryAttempts?: number): Promise<T[]>;
     /**
      * Get all entities within the result returning only documents
      * @param options Options used to aide in the retrieval of data
      */
-    fetchAll(options?: IDbFetchOptions): Promise<any[]>;
-    queryByType<T extends Entity>(view: string, options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<T[]>;
-    query(view: string, options?: IDbFetchOptions): Promise<any[]>;
+    fetchAll(options?: IDbFetchOptions, retryAttempts?: number): Promise<any[]>;
+    queryByType<T extends Entity>(view: string, options?: IDbFetchOptions, mapBuilder?: IEntityMapBuilder<T>, retryAttempts?: number): Promise<T[]>;
+    query(view: string, options?: IDbFetchOptions, retryAttempts?: number): Promise<any[]>;
     /**
      * Executes a query against the specified lucene server and couchdb database
      * @param options LuceneFetchOptions required to perform search
      * @param mapBuilder Entity mapping data
      */
-    luceneQuery<T extends Entity>(options: LuceneFetchOptions, mapBuilder?: IEntityMapBuilder<T>): Promise<LuceneFetchResults>;
+    luceneQuery<T extends Entity>(options: LuceneFetchOptions, mapBuilder?: IEntityMapBuilder<T>, retryAttempts?: number): Promise<LuceneFetchResults>;
     /**
      * Creates, updates or delete documents in bulk
      * @param docs Documents to be created/updated/deleted
