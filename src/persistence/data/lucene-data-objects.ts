@@ -14,8 +14,9 @@ export class LuceneFetchOptions {
    * @param limit Specify the default limit of records to return, default is 25
    * @param skip Number of th records to skip
    * @param secure Determines whether the url is send as https 
+   * @param bookmark Used in cloudant
    */
-  constructor(public luceneServer: string, public databaseName: string, public indexPath: string, public q: string, public include_docs: boolean = false, public limit: number = 25, public skip: number = 0, public secure: boolean = false) {
+  constructor(public luceneServer: string, public databaseName: string, public indexPath: string, public q: string, public include_docs: boolean = false, public limit: number = 25, public skip: number = 0, public secure: boolean = false, public bookmark: string = '') {
     Assert.isTruthy(this.luceneServer, 'Index url cannot be null/empty')
     Assert.isTruthy(this.databaseName, 'Database name cannot be null/empty');
     Assert.isTruthy(this.indexPath, 'Index path cannot be null/empty');
@@ -28,7 +29,7 @@ export class LuceneFetchOptions {
     let query: string = StringUtilities.replaceAll(this.q, '/', '//');
     query = StringUtilities.replaceAll(query, '\\*', '%2A');
     query = StringUtilities.replaceAll(query, '\\?', '%3F');
-    let parameters = `?q=${query}&include_docs=${this.include_docs}&limit=${this.limit}&skip=${this.skip}`;
+    let parameters = `?q=${query}&include_docs=${this.include_docs}&limit=${this.limit}&skip=${this.skip}&bookmark="${this.bookmark}"`;
     let path = `http${this.secure ? 's' : ''}://` + Utilities.join(this.luceneServer, this.databaseName, '_design', this.indexPath);
     path += parameters;
     return path;

@@ -9,6 +9,7 @@ export declare class LuceneFetchOptions {
     limit: number;
     skip: number;
     secure: boolean;
+    bookmark: string;
     /**
      * Creates a lucene fetch option
      * @param luceneServer Location to the lucene server
@@ -19,8 +20,9 @@ export declare class LuceneFetchOptions {
      * @param limit Specify the default limit of records to return, default is 25
      * @param skip Number of th records to skip
      * @param secure Determines whether the url is send as https
+     * @param bookmark Used in cloudant
      */
-    constructor(luceneServer: string, databaseName: string, indexPath: string, q: string, include_docs?: boolean, limit?: number, skip?: number, secure?: boolean);
+    constructor(luceneServer: string, databaseName: string, indexPath: string, q: string, include_docs?: boolean, limit?: number, skip?: number, secure?: boolean, bookmark?: string);
     readonly url: string;
 }
 /**Implements a lucene scored row result */
