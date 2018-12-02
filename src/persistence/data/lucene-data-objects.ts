@@ -31,7 +31,7 @@ export class LuceneFetchOptions {
     query = StringUtilities.replaceAll(query, '\\?', '%3F');
     let parameters = `?q=${query}&include_docs=${this.include_docs}&limit=${this.limit}&skip=${this.skip}`;
     if(!!this.bookmark)
-      parameters = parameters + `&bookmark="${this.bookmark}"`;
+      parameters = parameters + `&bookmark=${this.bookmark}`;
     let path = `http${this.secure ? 's' : ''}://` + Utilities.join(this.luceneServer, this.databaseName, '_design', this.indexPath);
     path += parameters;
     return path;
