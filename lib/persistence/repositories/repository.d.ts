@@ -67,7 +67,7 @@ export declare class Repository {
      * @param error Error type
      * @param reason Reason error occurred
      */
-    private generateError(error, reason?);
+    private generateError(error, reason);
     /**
      * Creates a new db unknown error
      */
@@ -75,9 +75,9 @@ export declare class Repository {
     /**
      * Creates a new error message
      * @param error Error message
-     * @param reason Reason for error`
+     * @param reason Reason for error
      */
-    static createError(error: string, reason?: string): IDbError;
+    static createError(error: string, reason?: any): IDbError;
     /**
     * Executes a lucene search
     * @param url Url to the resource

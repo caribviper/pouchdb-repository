@@ -112,7 +112,7 @@ export class Repository {
       let response: IDbResponse = await this.db.remove(entity);
       return response.ok;
     } catch (error) {
-      throw this.generateError('Unable to delete entity');
+      throw this.generateError('Unable to delete entity', error);
     }
   }
 
@@ -122,14 +122,14 @@ export class Repository {
    */
   public async get<T extends Entity>(id, mapBuilder: IEntityMapBuilder<T> = undefined): Promise<T> {
     if (!id)
-      throw this.generateError('Unable to fetch requested entity due to invalid id');
+      throw this.generateError('Unable to fetch requested entity due to invalid id', '');
     try {
       let result = await this.db.get(id);
       return EntityMaps.mapEntityMap(mapBuilder, result);
     } catch (error) {
       if (!!error.error)
         throw new Error(error.error);
-      throw this.generateError('Unable to fetch requested entity');
+      throw this.generateError('Unable to fetch requested entity', error);
     }
   }
 
@@ -148,7 +148,7 @@ export class Repository {
       if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.find(query, mapBuilder, --retryAttempts);
       }
-      throw this.generateError('An error occurred executing the query')
+      throw this.generateError('An error occurred executing the query', error)
     }
   }
 
@@ -176,7 +176,7 @@ export class Repository {
       if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.fetchAllByType(options, mapBuilder, --retryAttempts);
       }
-      throw this.generateError('An error occurred fetching the entities');
+      throw this.generateError('An error occurred fetching the entities', error);
     }
   }
 
@@ -201,7 +201,7 @@ export class Repository {
       if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.fetchAll(options, --retryAttempts);
       }
-      throw this.generateError('An error occurred fetching the entities');
+      throw this.generateError('An error occurred fetching the entities', error);
     }
   }
 
@@ -225,7 +225,7 @@ export class Repository {
       if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.queryByType(view, options, mapBuilder, --retryAttempts);
       }
-      throw this.generateError('An error occurred fetching the entities from the view');
+      throw this.generateError('An error occurred fetching the entities from the view', error);
     }
   }
 
@@ -238,7 +238,7 @@ export class Repository {
       if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.query(view, options, --retryAttempts);
       }
-      throw this.generateError('An error occurred fetching the entities from the view');
+      throw this.generateError('An error occurred fetching the entities from the view', error);
     }
   }
 
@@ -266,7 +266,7 @@ export class Repository {
       if ((error.error === 'too_many_requests' || error.status === 429 || error.status === 500) && retryAttempts > 1) {
         return await this.luceneQuery(options, mapBuilder, --retryAttempts);
       }
-      throw this.generateError('An error occurred fetching the entities from the lucene index');
+      throw this.generateError('An error occurred fetching the entities from the lucene index', error);
     }
   }
 
@@ -285,7 +285,7 @@ export class Repository {
    * @param error Error type
    * @param reason Reason error occurred
    */
-  private generateError(error: string, reason: string = ''): IDbError {
+  private generateError(error: string, reason: any): IDbError {
     return Repository.createError(error, reason);
   }
   /**
@@ -298,9 +298,9 @@ export class Repository {
   /**
    * Creates a new error message
    * @param error Error message
-   * @param reason Reason for error`
+   * @param reason Reason for error
    */
-  public static createError(error: string, reason: string = ''): IDbError {
+  public static createError(error: string, reason: any = ''): IDbError {
     Assert.isTruthy(error, 'Error for error message cannot be null/empty');
     let e: IDbError = {
       error: error,
